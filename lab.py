@@ -15,7 +15,8 @@ def main(su_name):
     #i = iB = 1
     ch=1
     #kB=kB1=kB2=0
-    sB=np.array([])
+    sB=np.zeros((10,9,9),dtype=int)
+    is_self_c = False
     
     s_inp = np.array(json.load(open(su_name,'r')))
     
@@ -71,7 +72,7 @@ def main(su_name):
         #print( s_inp)
     #BACKUP FOR SELF-CONTROL
     
-    sB = s_inp.copy()
+    #sB = s_inp.copy()
     while(ch>0):
         
         s_inp_b = s_inp.copy()
@@ -108,26 +109,40 @@ def main(su_name):
             print()
         print('-----------------')
         if m_n[0] == 20:
-            for i1 in range(9):
-                for i2 in range(9): 
-                    if (np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) and ch==0):
-                        print('no poly')
-                        return
-                    elif (np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) and ch==1):
-                        print('no sol')
-                        return
-            print('win. answ:')
-            for i1 in range(9):
-                for i2 in range(9):
-                    print(np.where(s_inp[1:,:,:][:,i1,i2]==1)[0][0]+1, end=' ')
-                print()
-            print('-----------------')
-            return
+            if (ch>1 and ch<20 and not np.sum(s_inp[1:,:,:])==81):# and (not np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) or not is_self_c) ):
+                ch-=1
+                np.copyto(s_inp, sB)
+                print('SB: ',s_inp)
+                choose = (np.where(s_inp[1:,:,:][:,m_n[1],m_n[2]]==1)[0]+1)[ch-1]
+                print(choose)
+                s_inp[choose,m_n[1],m_n[2]] =0
+                print('minus chance')
+            else:
+                for i1 in range(9):
+                    for i2 in range(9): 
+                        if (np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) and is_self_c):
+                            print('no poly')
+                            print(ch)
+                            return
+                        if (np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) and not is_self_c):
+                            print('no sol')
+                            return
+                print('win')
+                for i1 in range(9):
+                    for i2 in range(9):
+                        print(np.where(s_inp[1:,:,:][:,i1,i2]==1)[0][0]+1, end=' ')
+                    print()
+                print('-----------------')
+                return
         print('possible variant for {}: {}'.format((m_n[1],m_n[2]), np.where(s_inp[1:,:,:][:,m_n[1],m_n[2]]==1)[0] +1))
         ch = m_n[0]
-        ch -= 1
-        s_inp[(np.where(s_inp[1:,:,:][:,m_n[1],m_n[2]]==1)[0]+1)[0],m_n[1],m_n[2]] =0
-        print('minus chance')
+        
+        is_self_c=True
+        if ch<9:     
+            np.copyto(sB, s_inp)
+            choose = (np.where(s_inp[1:,:,:][:,m_n[1],m_n[2]]==1)[0]+1)[0]
+            print(choose)
+            s_inp[choose,m_n[1],m_n[2]] =0
                 
     print('++++ SO HERE IS NUMBER OF POSSIBLE VARIANTS FOR EACH CELL ++++')
     for i1 in range(9):
@@ -148,10 +163,11 @@ def main(su_name):
             print(np.where(s_inp[1:,:,:][:,i1,i2]==1)[0][0]+1, end=' ')
         print()
     print('-----------------')  
+
            
     
 if __name__ == "__main__":
-    for x in range(1,8):
+    for x in range(1,9):
         for i in ['sudoku_0{}.json'.format(x)]:
             print(i)
             main(i)
