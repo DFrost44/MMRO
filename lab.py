@@ -116,7 +116,7 @@ def main(su_name):
                     elif (np.array_equal(s_inp[1:,:,:][:,i1,i2], np.zeros(9)) and ch==1):
                         print('no sol')
                         return
-            print('win')
+            print('win. answ:')
             for i1 in range(9):
                 for i2 in range(9):
                     print(np.where(s_inp[1:,:,:][:,i1,i2]==1)[0][0]+1, end=' ')
