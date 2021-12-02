@@ -117,6 +117,11 @@ def main(su_name):
                         print('no sol')
                         return
             print('win')
+            for i1 in range(9):
+                for i2 in range(9):
+                    print(np.where(s_inp[1:,:,:][:,i1,i2]==1)[0][0]+1, end=' ')
+                print()
+            print('-----------------')
             return
         print('possible variant for {}: {}'.format((m_n[1],m_n[2]), np.where(s_inp[1:,:,:][:,m_n[1],m_n[2]]==1)[0] +1))
         ch = m_n[0]
@@ -146,4 +151,7 @@ def main(su_name):
            
     
 if __name__ == "__main__":
-    main('sudoku_01.json')
+    for x in range(1,8):
+        for i in ['sudoku_0{}.json'.format(x)]:
+            print(i)
+            main(i)
